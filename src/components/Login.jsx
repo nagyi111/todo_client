@@ -3,23 +3,23 @@ import { Button } from '@heroui/react'
 import { InputGroup } from '@heroui/react'
 import { TextField } from '@heroui/react'
 import React, { useState } from 'react'
+import { login } from '../api'
 
 export const Login = ({ setisLoggedIn }) => {
     const [username, setUsername] = useState('')
-    const [pw, setPw] = useState('')
+    const [password, setPassword] = useState('')
     const [msg, setMsg] = useState('')
 
     const myUsername = "DOMI"
     const myPw = "123"
 
-    const handleLogin = () => {
-        console.log(username, pw)
-
-        if (username === myUsername && pw === myPw) {
-            setisLoggedIn(true)
-            setMsg('')
-        } else {
-            setMsg('Helytelen felhasználónév jelszó páros!')
+    const handleLogin = async () => {
+        try {
+            const data = await login(username, password)
+            setisLoggedIn(data.success)
+        } catch (error) {
+            console.log(error)
+            setMsg(error.response?.data?.msg || 'Nem sikerült kapcsolódni a szerverhez!')
         }
     }
 
@@ -42,8 +42,8 @@ export const Login = ({ setisLoggedIn }) => {
                 <InputGroup fullWidth>
                     <InputGroup.Input
                         type="password"
-                        value={pw}
-                        onChange={(e) => setPw(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </InputGroup>
             </TextField>
